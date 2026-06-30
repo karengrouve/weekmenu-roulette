@@ -51,7 +51,7 @@ body {
   padding: 28px 16px 16px;
 }
 .logo-img {
-  max-width: min(480px, 90vw);
+  max-width: min(600px, 96vw);
   height: auto;
   display: block;
   margin: 0 auto;
@@ -640,7 +640,7 @@ hr.div {
 </div>
 
 <!-- ═══ TAB 1: RECEPTEN ═══ -->
-<div id="tab-recepten" class="panel active">
+<div id="tab-recepten" class="panel">
   <div class="zoek-row">
     <input class="inp" id="zoekInp" placeholder="Zoek recept..." oninput="renderRecepten()">
     <select class="sel" id="filterSel" onchange="renderRecepten()" style="width:auto; flex-shrink:0; padding:10px 10px;">
@@ -729,7 +729,7 @@ hr.div {
 </div>
 
 <!-- ═══ TAB 3: ROULETTE ═══ -->
-<div id="tab-roulette" class="panel">
+<div id="tab-roulette" class="panel active">
   <div class="s-label">Voor hoeveel avonden?</div>
   <div class="card">
     <div class="days-row">
@@ -843,13 +843,13 @@ hr.div {
 </div>
 
 <nav class="bottom-nav">
-  <div class="nav-btn active" onclick="showTab('recepten', this)">
+  <div class="nav-btn" onclick="showTab('recepten', this)">
     Recepten
   </div>
   <div class="nav-btn" onclick="showTab('ai', this)">
     AI Recept
   </div>
-  <div class="nav-btn" onclick="showTab('roulette', this)">
+  <div class="nav-btn active" onclick="showTab('roulette', this)">
     Roulette
   </div>
 </nav>
@@ -1260,7 +1260,9 @@ function pickMenu(n) {
 function renderSlots(menu) {
   document.getElementById('slotsWrap').innerHTML = menu.map((r,i) => {
     const m = CAT[r.cat]||CAT.overig;
-    return `<div class="slot-row">
+    const klikbaar = r.id ? `onclick="openDetail('${r.id}')" style="cursor:pointer"` : '';
+    const pijl = r.id ? `<span style="color:rgba(212,160,23,0.4); font-size:0.8rem; flex-shrink:0;">›</span>` : '';
+    return `<div class="slot-row" ${klikbaar}>
       <div class="slot-day">
         <div class="slot-day-name">${i<7?DAGEN[i]:'Dag'}</div>
         <div class="slot-day-num">${i+1}</div>
@@ -1268,6 +1270,7 @@ function renderSlots(menu) {
       <div class="slot-content">
         <span class="dot" style="background:${m.color}"></span>
         <span class="slot-meal" id="meal-${i}">${r.naam}</span>
+        ${pijl}
       </div>
     </div>`;
   }).join('');
