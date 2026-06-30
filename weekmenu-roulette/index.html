@@ -1291,8 +1291,7 @@ async function spin() {
   clearInterval(si);
   const menu = pickMenu(n);
   currentMenu = menu;
-  mEls.forEach((el,i)=>{ el.classList.remove('spinning'); el.textContent=menu[i]?.naam||'?'; });
-  menu.forEach((r,i)=>{ const d=document.querySelector(`#slotsWrap .slot-row:nth-child(${i+1}) .dot`); if(d)d.style.background=(CAT[r.cat]||CAT.overig).color; });
+  renderSlots(menu);
   document.getElementById('resultActions').style.display='block';
   spinning=false;
   document.getElementById('spinBtn').disabled=false;
