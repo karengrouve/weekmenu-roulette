@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Weekmenu Roulette</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap');
+
+:root {
+  --felt: #0a3d1f;
+  --felt-mid: #0d4a24;
+  --gold: #d4a017;
+  --gold-pale: #fdf3d0;
+  --cream: #faf7f0;
+  --card: rgba(0,0,0,0.32);
+  --border: rgba(212,160,23,0.2);
+  --nav-h: 64px;
+
+  --c-pasta:     #c0392b;
+  --c-noodles:   #ca6f1e;
+  --c-rijst:     #2471a3;
+  --c-aardappel: #7f8c1c;
+  --c-vlees:     #7d3c98;
+  --c-vega:      #1e8449;
+  --c-salade:    #148f77;
+  --c-soep:      #1a5276;
+  --c-pizza:     #a93226;
+  --c-bakken:    #b7770d;
+  --c-overig:    #5d6d7e;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: var(--felt);
+  background-image:
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.012) 10px, rgba(255,255,255,0.012) 20px),
+    radial-gradient(ellipse at top, #0f5129 0%, #071f10 100%);
+  min-height: 100vh;
+  color: var(--gold-pale);
+  padding-bottom: var(--nav-h);
+}
+
+/* HEADER */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(7,31,16,0.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  padding: 14px 16px 10px;
+}
+.logo-img {
+  max-width: min(280px, 70vw);
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: rgba(7,31,16,0.97);
+  border-top: 1px solid var(--border);
+  display: flex;
+  z-index: 100;
+}
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: none;
+  background: transparent;
+  color: rgba(212,160,23,0.4);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.15s;
+  padding: 8px 4px;
+}
+.nav-btn .nav-icon { font-size: 1.3rem; line-height: 1; }
+.nav-btn.active { color: var(--gold); }
+.nav-btn.active .nav-icon { filter: drop-shadow(0 0 4px rgba(212,160,23,0.5)); }
+
+/* PANELS */
+.panel { display: none; padding: 16px 14px 24px; max-width: 700px; margin: 0 auto; }
+.panel.active { display: block; }
+
+/* SECTION LABEL */
+.s-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  opacity: 0.8;
+  margin: 22px 0 10px;
+}
+.s-label:first-child { margin-top: 4px; }
+
+hr.div {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border), transparent);
+  margin: 20px 0;
+}
+
+/* CARD */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+/* INPUTS */
+.inp, .sel, .ta {
+  width: 100%;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: var(--gold-pale);
+  padding: 10px 13px;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.inp:focus, .sel:focus, .ta:focus { border-color: rgba(212,160,23,0.6); }
+.inp::placeholder, .ta::placeholder { color: rgba(212,160,23,0.28); }
+.sel option { background: #0d3a1a; }
+.ta { resize: vertical; min-height: 80px; line-height: 1.5; }
+.inp-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(212,160,23,0.55);
+  margin-bottom: 5px;
+  display: block;
+}
+.field { margin-bottom: 12px; }
+.field:last-child { margin-bottom: 0; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+/* BUTTONS */
+.btn-gold {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--gold) 0%, #e8b820 50%, var(--gold) 100%);
+  border: none;
+  border-radius: 50px;
+  color: var(--felt);
+  cursor: pointer;
+  box-shadow: 0 3px 14px rgba(212,160,23,0.3);
+  transition: all 0.18s;
+  display: inline-block;
+}
+.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(212,160,23,0.45); }
+.btn-gold:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.btn-outline {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  background: transparent;
+  color: rgba(212,160,23,0.7);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-block;
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+.btn-danger {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border: 1px solid rgba(231,76,60,0.35);
+  border-radius: 50px;
+  background: transparent;
+  color: rgba(231,76,60,0.7);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-danger:hover { border-color: #e74c3c; color: #e74c3c; }
+
+/* CAT DOT */
+.dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ═══ RECEPTEN LIJST (balkjes zoals Yemi) ═══ */
+.zoek-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+.zoek-row .inp { flex: 1; }
+
+.recept-lijst { display: flex; flex-direction: column; gap: 8px; }
+
+.recept-balk {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.12s;
+  min-height: 64px;
+}
+.recept-balk:hover { border-color: rgba(212,160,23,0.45); transform: translateX(2px); }
+
+.rb-foto {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  object-fit: cover;
+  display: block;
+}
+.rb-foto-placeholder {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  background: rgba(0,0,0,0.25);
+}
+.rb-body {
+  flex: 1;
+  padding: 10px 12px;
+  min-width: 0;
+}
+.rb-cat {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 3px;
+}
+.rb-naam {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--gold-pale);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rb-sub {
+  font-size: 0.68rem;
+  color: rgba(212,160,23,0.4);
+  margin-top: 2px;
+}
+.rb-acties {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px 8px 4px;
+  flex-shrink: 0;
+}
+.rb-btn {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: rgba(212,160,23,0.5);
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.rb-btn:hover { border-color: var(--gold); color: var(--gold); }
+.rb-btn.del:hover { border-color: #e74c3c; color: #e74c3c; }
+
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: rgba(212,160,23,0.3);
+}
+.empty-state .es-icon { font-size: 2.8rem; margin-bottom: 10px; }
+.empty-state p { font-size: 0.82rem; line-height: 1.7; }
+
+/* ═══ MODALS ═══ */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.78);
+  z-index: 200;
+  padding: 16px 12px;
+  overflow-y: auto;
+  align-items: flex-start;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: #0c4220;
+  background-image: radial-gradient(ellipse at top, #0f5129 0%, #071f10 100%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 540px;
+  padding: 22px 18px;
+  position: relative;
+  margin: auto;
+}
+.modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 30px; height: 30px;
+  color: var(--gold-pale);
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.modal-close:hover { border-color: var(--gold); color: var(--gold); }
+.modal-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 16px;
+  padding-right: 30px;
+  line-height: 1.3;
+}
+
+/* DETAIL MODAL */
+.detail-foto {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 9px;
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+.detail-meta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.detail-meta span {
+  font-size: 0.72rem;
+  color: rgba(212,160,23,0.55);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.detail-h {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 14px 0 7px;
+}
+.ing-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ing-list li {
+  font-size: 0.85rem;
+  color: var(--gold-pale);
+  padding: 3px 0;
+  border-bottom: 1px solid rgba(212,160,23,0.07);
+  display: flex;
+  gap: 7px;
+}
+.ing-list li::before { content: '·'; color: var(--gold); flex-shrink: 0; }
+.ber-list {
+  list-style: none;
+  counter-reset: stap;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.ber-list li {
+  counter-increment: stap;
+  font-size: 0.85rem;
+  color: var(--gold-pale);
+  line-height: 1.55;
+  display: flex;
+  gap: 10px;
+}
+.ber-list li::before {
+  content: counter(stap);
+  background: var(--gold);
+  color: var(--felt);
+  font-weight: 800;
+  font-size: 0.65rem;
+  min-width: 19px; height: 19px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.notitie-box {
+  background: rgba(212,160,23,0.06);
+  border: 1px solid rgba(212,160,23,0.14);
+  border-radius: 8px;
+  padding: 9px 13px;
+  font-size: 0.8rem;
+  color: rgba(212,160,23,0.65);
+  line-height: 1.5;
+  font-style: italic;
+  margin-top: 12px;
+}
+
+/* FOTO UPLOAD */
+.foto-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 90px;
+  border: 2px dashed rgba(212,160,23,0.28);
+  border-radius: 10px;
+  cursor: pointer;
+  color: rgba(212,160,23,0.4);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.15s;
+}
+.foto-label:hover { border-color: var(--gold); color: var(--gold); }
+.foto-label .fi { font-size: 1.5rem; }
+.foto-prev {
+  width: 100%;
+  max-height: 130px;
+  object-fit: cover;
+  border-radius: 9px;
+  display: none;
+  cursor: pointer;
+}
+
+/* ═══ AI TAB ═══ */
+.ai-result-box {
+  background: var(--card);
+  border: 1px solid rgba(212,160,23,0.28);
+  border-radius: 12px;
+  padding: 18px;
+  margin-top: 18px;
+}
+.ai-naam {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.loading-wrap {
+  text-align: center;
+  padding: 28px;
+}
+.loading-dots { display: flex; gap: 5px; justify-content: center; margin-bottom: 10px; }
+.loading-dots span {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: bounce 1s infinite;
+}
+.loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce { 0%,80%,100%{transform:scale(0.6);opacity:0.35} 40%{transform:scale(1);opacity:1} }
+.loading-txt { font-size: 0.78rem; color: rgba(212,160,23,0.4); }
+
+/* ═══ ROULETTE ═══ */
+.days-row {
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.day-btn {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2px solid rgba(212,160,23,0.32);
+  background: transparent;
+  color: var(--gold-pale);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.day-btn:hover { border-color: var(--gold); color: var(--gold); }
+.day-btn.active { background: var(--gold); border-color: var(--gold); color: var(--felt); box-shadow: 0 0 14px rgba(212,160,23,0.35); }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  border-radius: 18px;
+  border: 2px solid transparent;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(0,0,0,0.28);
+  color: rgba(212,160,23,0.7);
+  transition: all 0.15s;
+  user-select: none;
+}
+.chip.active { background: rgba(0,0,0,0.15); }
+
+.slot-row {
+  background: rgba(0,0,0,0.38);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+  min-height: 58px;
+}
+.slot-day {
+  background: rgba(212,160,23,0.07);
+  border-right: 1px solid var(--border);
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  flex-shrink: 0;
+}
+.slot-day-name { font-size: 0.58rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); }
+.slot-day-num { font-size: 1.25rem; font-weight: 700; color: var(--gold); line-height: 1; }
+.slot-content { flex: 1; padding: 10px 14px; display: flex; align-items: center; gap: 9px; }
+.slot-meal { font-size: 0.9rem; color: var(--cream); font-weight: 500; line-height: 1.3; }
+.slot-meal.spinning { color: var(--gold); animation: flicker 0.09s infinite; }
+@keyframes flicker { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+/* FOTO GROOT (lightbox) */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.lightbox.open { display: flex; }
+.lightbox img {
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: 10px;
+  object-fit: contain;
+}
+.lightbox-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 50%;
+  width: 36px; height: 36px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: calc(var(--nav-h) + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: rgba(7,31,16,0.97);
+  border: 1px solid var(--gold);
+  color: var(--gold-pale);
+  padding: 10px 22px;
+  border-radius: 22px;
+  font-size: 0.82rem;
+  transition: transform 0.28s;
+  z-index: 999;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(212,160,23,0.2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <img class="logo-img" src="Logo.png" alt="Weekmenu Roulette">
+</div>
+
+<!-- ═══ TAB 1: RECEPTEN ═══ -->
+<div id="tab-recepten" class="panel active">
+  <div class="zoek-row">
+    <input class="inp" id="zoekInp" placeholder="Zoek recept..." oninput="renderRecepten()">
+    <select class="sel" id="filterSel" onchange="renderRecepten()" style="width:auto; flex-shrink:0; padding:10px 10px;">
+      <option value="">Alles</option>
+      <option value="pasta">Pasta</option>
+      <option value="noodles">Noodles</option>
+      <option value="rijst">Rijst</option>
+      <option value="aardappel">Aardappels</option>
+      <option value="vlees">Vlees</option>
+      <option value="vega">Vega</option>
+      <option value="salade">Salade</option>
+      <option value="soep">Soep</option>
+      <option value="pizza">Pizza</option>
+      <option value="bakken">Bakken</option>
+      <option value="overig">Overig</option>
+    </select>
+  </div>
+  <div style="margin-bottom:12px;">
+    <button class="btn-gold" onclick="openToevoegen(null)" style="width:100%; padding:12px;">+ Recept toevoegen</button>
+  </div>
+  <div class="recept-lijst" id="receptLijst"></div>
+</div>
+
+<!-- ═══ TAB 2: AI HULP ═══ -->
+<div id="tab-ai" class="panel">
+  <div class="s-label">Wat wil je maken?</div>
+  <div class="card" style="display:flex; flex-direction:column; gap:11px;">
+    <div class="field">
+      <label class="inp-label">Ingrediënt of gerecht</label>
+      <input class="inp" id="aiInp" placeholder="Bijv. pasta, kip, zalm, chocolade..." maxlength="80">
+    </div>
+    <div class="row3">
+      <div class="field" style="margin-bottom:0">
+        <label class="inp-label">Gang</label>
+        <select class="sel" id="aiGang">
+          <option value="hoofdgerecht">Hoofdgerecht</option>
+          <option value="voorgerecht">Voorgerecht</option>
+          <option value="nagerecht">Nagerecht</option>
+          <option value="cake of taart">Cake/taart</option>
+          <option value="koekjes">Koekjes</option>
+          <option value="snack">Snack</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label class="inp-label">Personen</label>
+        <select class="sel" id="aiPersonen">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4" selected>4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="8">8</option>
+          <option value="10">10</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label class="inp-label">Categorie</label>
+        <select class="sel" id="aiCat">
+          <option value="pasta">Pasta</option>
+          <option value="noodles">Noodles</option>
+          <option value="rijst">Rijst</option>
+          <option value="aardappel">Aardappels</option>
+          <option value="vlees">Vlees</option>
+          <option value="vega">Vega</option>
+          <option value="salade">Salade</option>
+          <option value="soep">Soep</option>
+          <option value="pizza">Pizza</option>
+          <option value="bakken">Bakken</option>
+          <option value="overig">Overig</option>
+        </select>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:4px;">
+      <button class="btn-gold" id="aiBtn" onclick="genereerRecept()">Genereer recept</button>
+    </div>
+  </div>
+
+  <div id="aiResultWrap" style="display:none;">
+    <div class="ai-result-box" id="aiResult"></div>
+    <div style="text-align:center; margin-top:12px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn-gold" id="aiOpslaanBtn" onclick="slaAiOp()" style="display:none; padding:11px 24px;">Opslaan in receptenboek</button>
+      <button class="btn-outline" onclick="genereerRecept()">Opnieuw genereren</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB 3: ROULETTE ═══ -->
+<div id="tab-roulette" class="panel">
+  <div class="s-label">Voor hoeveel avonden?</div>
+  <div class="card">
+    <div class="days-row">
+      <button class="day-btn" data-n="1">1</button>
+      <button class="day-btn" data-n="2">2</button>
+      <button class="day-btn" data-n="3">3</button>
+      <button class="day-btn" data-n="4">4</button>
+      <button class="day-btn active" data-n="5">5</button>
+      <button class="day-btn" data-n="6">6</button>
+      <button class="day-btn" data-n="7">7</button>
+    </div>
+  </div>
+
+  <div class="s-label">Wat wil je in ieder geval eten?</div>
+  <div class="card">
+    <div style="font-size:0.7rem; color:rgba(212,160,23,0.38); margin-bottom:10px;">Niets aanvinken = alles mag.</div>
+    <div id="rouChips" style="display:flex; flex-wrap:wrap; gap:7px;"></div>
+  </div>
+
+  <hr class="div">
+  <div style="text-align:center;">
+    <button class="btn-gold" id="spinBtn" onclick="spin()" style="font-size:0.95rem; padding:15px 44px;">Draai de roulette!</button>
+  </div>
+
+  <div id="slotsWrap" style="margin-top:22px;"></div>
+  <div id="resultActions" style="display:none; text-align:center; margin-top:14px;">
+    <button class="btn-outline" onclick="copyMenu()">Kopieer weekmenu</button>
+  </div>
+</div>
+
+<!-- MODAL: DETAIL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <button class="modal-close" onclick="sluit('detailModal')">✕</button>
+    <div id="detailContent"></div>
+    <div style="display:flex; gap:8px; margin-top:16px; flex-wrap:wrap;">
+      <button class="btn-outline" onclick="bewerk(huidigDetailId)">Bewerken</button>
+      <button class="btn-danger" onclick="verwijder(huidigDetailId)">Verwijderen</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: TOEVOEGEN / BEWERKEN -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal">
+    <button class="modal-close" onclick="sluit('formModal')">✕</button>
+    <div class="modal-title" id="formTitel">Recept toevoegen</div>
+    <input type="hidden" id="formId">
+
+    <div class="field">
+      <label class="inp-label">Naam</label>
+      <input class="inp" id="fNaam" placeholder="Naam van het recept">
+    </div>
+    <div class="row2 field">
+      <div>
+        <label class="inp-label">Categorie</label>
+        <select class="sel" id="fCat">
+          <option value="pasta">Pasta</option>
+          <option value="noodles">Noodles</option>
+          <option value="rijst">Rijst</option>
+          <option value="aardappel">Aardappels</option>
+          <option value="vlees">Vlees</option>
+          <option value="vega">Vega</option>
+          <option value="salade">Salade</option>
+          <option value="soep">Soep</option>
+          <option value="pizza">Pizza</option>
+          <option value="bakken">Bakken</option>
+          <option value="overig">Overig</option>
+        </select>
+      </div>
+      <div>
+        <label class="inp-label">Personen</label>
+        <select class="sel" id="fPersonen">
+          <option value="1">1</option><option value="2">2</option>
+          <option value="3">3</option><option value="4" selected>4</option>
+          <option value="5">5</option><option value="6">6</option>
+          <option value="8">8</option><option value="10">10</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label class="inp-label">Ingrediënten <span style="opacity:0.45; font-size:0.65rem;">(één per regel)</span></label>
+      <textarea class="ta" id="fIng" placeholder="200g pasta&#10;2 teentjes knoflook&#10;..." rows="4"></textarea>
+    </div>
+    <div class="field">
+      <label class="inp-label">Bereiding <span style="opacity:0.45; font-size:0.65rem;">(één stap per regel)</span></label>
+      <textarea class="ta" id="fBer" placeholder="Kook de pasta al dente.&#10;Bak de knoflook goudbruin.&#10;..." rows="4"></textarea>
+    </div>
+    <div class="field">
+      <label class="inp-label">Notities <span style="opacity:0.45; font-size:0.65rem;">(optioneel)</span></label>
+      <input class="inp" id="fNot" placeholder="Link, tip, pagina kookboek...">
+    </div>
+    <div class="field">
+      <label class="inp-label">Foto <span style="opacity:0.45; font-size:0.65rem;">(optioneel)</span></label>
+      <input type="file" id="fFoto" accept="image/*" style="display:none" onchange="prevFoto()">
+      <label class="foto-label" for="fFoto" id="fotoLbl">
+        <span class="fi">📷</span><span>Foto toevoegen</span>
+      </label>
+      <img class="foto-prev" id="fotoPrev" onclick="document.getElementById('fFoto').click()">
+    </div>
+    <div style="text-align:center; margin-top:4px;">
+      <button class="btn-gold" onclick="slaFormOp()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="sluitLightbox()">
+  <button class="lightbox-close" onclick="sluitLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="showTab('recepten', this)">
+    <span class="nav-icon">📖</span>Recepten
+  </button>
+  <button class="nav-btn" onclick="showTab('ai', this)">
+    <span class="nav-icon">✨</span>AI Hulp
+  </button>
+  <button class="nav-btn" onclick="showTab('roulette', this)">
+    <span class="nav-icon">🎰</span>Roulette
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════
+// META
+// ════════════════════════════════
+const CAT = {
+  pasta:     { label:'Pasta',      emoji:'🍝', color:'#c0392b' },
+  noodles:   { label:'Noodles',    emoji:'🍜', color:'#ca6f1e' },
+  rijst:     { label:'Rijst',      emoji:'🍚', color:'#2471a3' },
+  aardappel: { label:'Aardappels', emoji:'🥔', color:'#7f8c1c' },
+  vlees:     { label:'Vlees',      emoji:'🍗', color:'#7d3c98' },
+  vega:      { label:'Vega',       emoji:'🥦', color:'#1e8449' },
+  salade:    { label:'Salade',     emoji:'🥗', color:'#148f77' },
+  soep:      { label:'Soep',       emoji:'🍲', color:'#1a5276' },
+  pizza:     { label:'Pizza',      emoji:'🍕', color:'#a93226' },
+  bakken:    { label:'Bakken',     emoji:'🎂', color:'#b7770d' },
+  overig:    { label:'Overig',     emoji:'🍴', color:'#5d6d7e' },
+};
+const DAGEN = ['Ma','Di','Wo','Do','Vr','Za','Zo'];
+
+// ════════════════════════════════
+// DATA
+// ════════════════════════════════
+const START = [
+  {naam:'Spaghetti',cat:'pasta',personen:4},{naam:'Carbonara',cat:'pasta',personen:4},
+  {naam:'Lasagna',cat:'pasta',personen:4},{naam:'Romige tagliatelle met zalm en asperges',cat:'pasta',personen:4},
+  {naam:'Pasta citroen',cat:'pasta',personen:4},{naam:'Kipdij pasta',cat:'pasta',personen:4},
+  {naam:'Spicy pasta Mike',cat:'pasta',personen:4,notitie:'Mike zijn recept'},
+  {naam:'Cacio e pepe',cat:'pasta',personen:2},{naam:'Chicken Alfredo',cat:'pasta',personen:4},
+  {naam:'Pasta el Forno',cat:'pasta',personen:4},{naam:'Spaghetti met gehaktballen',cat:'pasta',personen:4},
+  {naam:'Mushroom garlic pasta met steak',cat:'pasta',personen:2},
+  {naam:'Bami',cat:'noodles',personen:4},{naam:'Bami met kipsaté',cat:'noodles',personen:4},
+  {naam:'Bami goreng',cat:'noodles',personen:4},
+  {naam:'Kip met rijst',cat:'rijst',personen:4},{naam:'Yakiniku Don',cat:'rijst',personen:4},
+  {naam:'Claypot rijst',cat:'rijst',personen:4},{naam:'Rijst met curry',cat:'rijst',personen:4},
+  {naam:'Rijst met kip, satesaus en komkommersalade',cat:'rijst',personen:4},
+  {naam:'Chicken biryani',cat:'rijst',personen:4},{naam:'Nasi goreng',cat:'rijst',personen:4},
+  {naam:'Fried rice',cat:'rijst',personen:4},{naam:'Bibimbap',cat:'rijst',personen:2},
+  {naam:'Gyros rice bowl',cat:'rijst',personen:4},
+  {naam:'Patatje',cat:'aardappel',personen:4},
+  {naam:'Krieltjes met vlees, doperwtjes en wortels',cat:'aardappel',personen:4},
+  {naam:'Geroosterde aardappel, asperges en steak',cat:'aardappel',personen:2},
+  {naam:'Aardappel salade schnitzel',cat:'aardappel',personen:4},
+  {naam:'Aardappelen met cordon bleu + zalmwellington',cat:'aardappel',personen:4},
+  {naam:'Stamppot',cat:'aardappel',personen:4},{naam:'Wortelstamppot',cat:'aardappel',personen:4},
+  {naam:'Spinazie stamppot met worst',cat:'aardappel',personen:4},
+  {naam:'Zuurkoolschotel',cat:'aardappel',personen:4},
+  {naam:'Karaage',cat:'vlees',personen:4},{naam:'Tacos',cat:'vlees',personen:4},
+  {naam:'Burritos',cat:'vlees',personen:4},{naam:'Shoarma',cat:'vlees',personen:4},
+  {naam:'Fajitas',cat:'vlees',personen:4},{naam:'Hamburgers + patats',cat:'vlees',personen:4},
+  {naam:'Fried chicken + brocoli salade',cat:'vlees',personen:4},
+  {naam:'Kipbladerdeeg',cat:'vlees',personen:4},
+  {naam:'Beef Wellington met aardappelkroket en wortel',cat:'vlees',personen:4},
+  {naam:'Traybake groente met kip',cat:'vlees',personen:4},
+  {naam:'Kip Madras',cat:'vlees',personen:4},{naam:'Kip Jamaican Jerk',cat:'vlees',personen:4},
+  {naam:'Kip katsu',cat:'vlees',personen:4},
+  {naam:'Eendenborstfilet + aardappelsalade',cat:'vlees',personen:2},
+  {naam:'Mosselen + pannenkoeken',cat:'vlees',personen:4},
+  {naam:'Gourmet',cat:'vlees',personen:4},{naam:'Pita met kip',cat:'vlees',personen:4,notitie:'Pag. 83 kookboek'},
+  {naam:'Wraps met kip',cat:'vlees',personen:4},
+  {naam:'Gevulde zoeteaardappel',cat:'vega',personen:4},
+  {naam:'Risotto',cat:'vega',personen:4},
+  {naam:'Romige aspergerisotto met zalm',cat:'vega',personen:4},
+  {naam:'Pannenkoeken',cat:'vega',personen:4},{naam:'Poffertjes',cat:'vega',personen:4},
+  {naam:'Waldorfsalade',cat:'salade',personen:4},{naam:'Maaltijdsalade',cat:'salade',personen:4},
+  {naam:'Ceasarsalade',cat:'salade',personen:4},{naam:'Perzik burrata salade',cat:'salade',personen:4},
+  {naam:'Roasted tomatensoep + stokbrood',cat:'soep',personen:4},
+  {naam:'Pan Pizza',cat:'pizza',personen:4},{naam:'Pizza',cat:'pizza',personen:4},
+  {naam:'Nachos',cat:'overig',personen:4},{naam:'Kaasfondue',cat:'overig',personen:4},
+].map((r,i) => ({...r, id:'s'+i, ingredienten:[], bereiding:[], notitie:r.notitie||'', foto:null}));
+
+function laad() {
+  const raw = localStorage.getItem('wm2_recepten');
+  if (raw) return JSON.parse(raw);
+  sla(START);
+  return START;
+}
+function sla(lijst) { localStorage.setItem('wm2_recepten', JSON.stringify(lijst)); }
+
+let R = laad();
+
+// ════════════════════════════════
+// TABS
+// ════════════════════════════════
+function showTab(naam, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+naam).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (naam === 'recepten') renderRecepten();
+  if (naam === 'roulette') renderRouChips();
+}
+
+// ════════════════════════════════
+// RECEPTEN
+// ════════════════════════════════
+function renderRecepten() {
+  const zoek = document.getElementById('zoekInp').value.toLowerCase();
+  const cat  = document.getElementById('filterSel').value;
+  const lijst = R.filter(r =>
+    r.naam.toLowerCase().includes(zoek) && (!cat || r.cat === cat)
+  );
+  const el = document.getElementById('receptLijst');
+  if (!lijst.length) {
+    el.innerHTML = `<div class="empty-state"><div class="es-icon">🍽️</div><p>Geen recepten gevonden.<br>Voeg je eerste recept toe!</p></div>`;
+    return;
+  }
+  el.innerHTML = lijst.map(r => {
+    const m = CAT[r.cat] || CAT.overig;
+    const foto = r.foto
+      ? `<img class="rb-foto" src="${r.foto}" alt="${r.naam}">`
+      : `<div class="rb-foto-placeholder">${m.emoji}</div>`;
+    const heeftIng = r.ingredienten && r.ingredienten.length > 0;
+    return `
+      <div class="recept-balk" onclick="openDetail('${r.id}')">
+        ${foto}
+        <div class="rb-body">
+          <div class="rb-cat"><span class="dot" style="background:${m.color}"></span><span style="color:${m.color}">${m.label}</span></div>
+          <div class="rb-naam">${r.naam}</div>
+          <div class="rb-sub">👤 ${r.personen} ${r.personen==1?'persoon':'personen'}${heeftIng ? ' · '+r.ingredienten.length+' ingrediënten' : ''}</div>
+        </div>
+        <div class="rb-acties" onclick="event.stopPropagation()">
+          <button class="rb-btn" onclick="openToevoegen('${r.id}')">✏️</button>
+          <button class="rb-btn del" onclick="verwijder('${r.id}')">🗑️</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════
+// DETAIL
+// ════════════════════════════════
+let huidigDetailId = null;
+
+function openDetail(id) {
+  const r = R.find(x => x.id === id);
+  if (!r) return;
+  huidigDetailId = id;
+  const m = CAT[r.cat] || CAT.overig;
+
+  const fotoHtml = r.foto
+    ? `<img class="detail-foto" src="${r.foto}" alt="${r.naam}" onclick="openLightbox('${r.foto}')">`
+    : '';
+  const ingHtml = r.ingredienten?.length
+    ? `<ul class="ing-list">${r.ingredienten.map(i=>`<li>${i}</li>`).join('')}</ul>`
+    : `<p style="font-size:0.8rem;color:rgba(212,160,23,0.3);font-style:italic;">Nog geen ingrediënten.</p>`;
+  const berHtml = r.bereiding?.length
+    ? `<ol class="ber-list">${r.bereiding.map(s=>`<li>${s}</li>`).join('')}</ol>`
+    : `<p style="font-size:0.8rem;color:rgba(212,160,23,0.3);font-style:italic;">Nog geen bereiding.</p>`;
+
+  document.getElementById('detailContent').innerHTML = `
+    ${fotoHtml}
+    <div class="modal-title">${r.naam}</div>
+    <div class="detail-meta">
+      <span><span class="dot" style="background:${m.color}"></span>${m.label}</span>
+      <span>👤 ${r.personen} ${r.personen==1?'persoon':'personen'}</span>
+    </div>
+    ${r.notitie ? `<div class="notitie-box">💡 ${r.notitie}</div>` : ''}
+    <div class="detail-h">Ingrediënten</div>${ingHtml}
+    <div class="detail-h">Bereiding</div>${berHtml}
+  `;
+  open('detailModal');
+}
+
+// ════════════════════════════════
+// TOEVOEGEN / BEWERKEN
+// ════════════════════════════════
+let fotoData = null;
+
+function openToevoegen(id) {
+  sluit('detailModal');
+  const r = id ? R.find(x => x.id === id) : null;
+  document.getElementById('formTitel').textContent = r ? 'Recept bewerken' : 'Recept toevoegen';
+  document.getElementById('formId').value = id || '';
+  document.getElementById('fNaam').value = r?.naam || '';
+  document.getElementById('fCat').value = r?.cat || 'pasta';
+  document.getElementById('fPersonen').value = r?.personen || 4;
+  document.getElementById('fIng').value = r?.ingredienten?.join('\n') || '';
+  document.getElementById('fBer').value = r?.bereiding?.join('\n') || '';
+  document.getElementById('fNot').value = r?.notitie || '';
+  document.getElementById('fFoto').value = '';
+  fotoData = r?.foto || null;
+  if (fotoData) {
+    document.getElementById('fotoPrev').src = fotoData;
+    document.getElementById('fotoPrev').style.display = 'block';
+    document.getElementById('fotoLbl').style.display = 'none';
+  } else {
+    document.getElementById('fotoPrev').style.display = 'none';
+    document.getElementById('fotoLbl').style.display = 'flex';
+  }
+  open('formModal');
+}
+
+function prevFoto() {
+  const file = document.getElementById('fFoto').files[0];
+  if (!file) return;
+  const rd = new FileReader();
+  rd.onload = e => {
+    fotoData = e.target.result;
+    document.getElementById('fotoPrev').src = fotoData;
+    document.getElementById('fotoPrev').style.display = 'block';
+    document.getElementById('fotoLbl').style.display = 'none';
+  };
+  rd.readAsDataURL(file);
+}
+
+function slaFormOp() {
+  const naam = document.getElementById('fNaam').value.trim();
+  if (!naam) { showToast('Vul een naam in.'); return; }
+  const bestaandId = document.getElementById('formId').value;
+  const rec = {
+    id: bestaandId || 'r_'+Date.now(),
+    naam,
+    cat: document.getElementById('fCat').value,
+    personen: parseInt(document.getElementById('fPersonen').value),
+    ingredienten: document.getElementById('fIng').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    bereiding: document.getElementById('fBer').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    notitie: document.getElementById('fNot').value.trim(),
+    foto: fotoData || null,
+  };
+  if (bestaandId) {
+    R = R.map(r => r.id === bestaandId ? rec : r);
+  } else {
+    R.push(rec);
+  }
+  sla(R);
+  sluit('formModal');
+  renderRecepten();
+  showToast(bestaandId ? 'Recept bijgewerkt!' : `"${naam}" opgeslagen!`);
+}
+
+function verwijder(id) {
+  if (!confirm('Dit recept verwijderen?')) return;
+  R = R.filter(r => r.id !== id);
+  sla(R);
+  sluit('detailModal');
+  renderRecepten();
+  showToast('Recept verwijderd.');
+}
+
+function bewerk(id) {
+  openToevoegen(id);
+}
+
+// ════════════════════════════════
+// LIGHTBOX
+// ════════════════════════════════
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function sluitLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+// ════════════════════════════════
+// AI GENERATOR
+// ════════════════════════════════
+let aiRecept = null;
+
+async function genereerRecept() {
+  const ing = document.getElementById('aiInp').value.trim();
+  if (!ing) { showToast('Vul een ingrediënt in.'); return; }
+
+  const btn = document.getElementById('aiBtn');
+  btn.disabled = true;
+  document.getElementById('aiResultWrap').style.display = 'block';
+  document.getElementById('aiOpslaanBtn').style.display = 'none';
+  document.getElementById('aiResult').innerHTML = `
+    <div class="loading-wrap">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <div class="loading-txt">Recept wordt bedacht...</div>
+    </div>`;
+
+  try {
+    const resp = await fetch('/.netlify/functions/recept-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ingredient: ing,
+        gang: document.getElementById('aiGang').value,
+        personen: document.getElementById('aiPersonen').value,
+        categorie: document.getElementById('aiCat').value,
+      }),
+    });
+    if (!resp.ok) throw new Error('Server error');
+    aiRecept = await resp.json();
+    aiRecept.cat = document.getElementById('aiCat').value;
+    aiRecept.personen = parseInt(document.getElementById('aiPersonen').value);
+    renderAiResultaat(aiRecept);
+    document.getElementById('aiOpslaanBtn').style.display = 'inline-block';
+  } catch(e) {
+    document.getElementById('aiResult').innerHTML =
+      `<div style="text-align:center;color:#e74c3c;padding:24px;font-size:0.83rem;">Er ging iets mis. Controleer je verbinding en probeer opnieuw.</div>`;
+  }
+  btn.disabled = false;
+}
+
+function renderAiResultaat(r) {
+  const m = CAT[r.cat] || CAT.overig;
+  document.getElementById('aiResult').innerHTML = `
+    <div class="ai-naam">${r.naam}</div>
+    <div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;">
+      <span style="font-size:0.68rem;color:${m.color};font-weight:700;letter-spacing:1px;text-transform:uppercase;">${m.emoji} ${m.label}</span>
+      <span style="font-size:0.68rem;color:rgba(212,160,23,0.45);">👤 ${r.personen} personen</span>
+    </div>
+    <div class="detail-h">Ingrediënten</div>
+    <ul class="ing-list">${(r.ingredienten||[]).map(i=>`<li>${i}</li>`).join('')}</ul>
+    <div class="detail-h">Bereiding</div>
+    <ol class="ber-list">${(r.bereiding||[]).map(s=>`<li>${s}</li>`).join('')}</ol>
+    ${r.tip ? `<div class="notitie-box" style="margin-top:12px;">💡 ${r.tip}</div>` : ''}
+  `;
+}
+
+function slaAiOp() {
+  if (!aiRecept) return;
+  const rec = {
+    id: 'r_'+Date.now(),
+    naam: aiRecept.naam,
+    cat: aiRecept.cat,
+    personen: aiRecept.personen,
+    ingredienten: aiRecept.ingredienten || [],
+    bereiding: aiRecept.bereiding || [],
+    notitie: aiRecept.tip || '',
+    foto: null,
+  };
+  R.push(rec);
+  sla(R);
+  showToast(`"${rec.naam}" opgeslagen!`);
+  document.getElementById('aiOpslaanBtn').style.display = 'none';
+}
+
+// ════════════════════════════════
+// ROULETTE
+// ════════════════════════════════
+let aantalDagen = 5;
+let actiefeCats = new Set();
+let currentMenu = [];
+let spinning = false;
+
+function renderRouChips() {
+  document.getElementById('rouChips').innerHTML = Object.entries(CAT).map(([key, m]) => {
+    const actief = actiefeCats.has(key);
+    return `<div class="chip ${actief?'active':''}"
+      style="${actief?`border-color:${m.color};color:${m.color};`:''}"
+      onclick="toggleCat(this,'${key}','${m.color}')">
+      <span class="dot" style="background:${m.color}"></span>${m.label}
+    </div>`;
+  }).join('');
+}
+
+function toggleCat(el, cat, color) {
+  if (actiefeCats.has(cat)) {
+    actiefeCats.delete(cat);
+    el.classList.remove('active');
+    el.style.borderColor = 'transparent';
+    el.style.color = 'rgba(212,160,23,0.7)';
+    el.style.background = 'rgba(0,0,0,0.28)';
+  } else {
+    actiefeCats.add(cat);
+    el.classList.add('active');
+    el.style.borderColor = color;
+    el.style.color = color;
+    el.style.background = 'rgba(0,0,0,0.15)';
+  }
+}
+
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    aantalDagen = parseInt(btn.dataset.n);
+    if (currentMenu.length) renderSlots(currentMenu);
+  });
+});
+
+function getPool() {
+  return actiefeCats.size > 0 ? R.filter(r => actiefeCats.has(r.cat)) : R;
+}
+
+function pickMenu(n) {
+  const pool = getPool();
+  if (!pool.length) return [];
+  const cats = actiefeCats.size > 0 ? [...actiefeCats] : [...new Set(R.map(r=>r.cat))];
+  const result = [], used = new Set();
+  for (let i = 0; i < n; i++) {
+    const cat = cats[i % cats.length];
+    const cp = pool.filter(r => r.cat===cat && !used.has(r.id));
+    let g;
+    if (cp.length) { g = cp[Math.floor(Math.random()*cp.length)]; }
+    else {
+      const rest = pool.filter(r=>!used.has(r.id));
+      g = rest.length ? rest[Math.floor(Math.random()*rest.length)] : pool[Math.floor(Math.random()*pool.length)];
+    }
+    used.add(g.id);
+    result.push(g);
+  }
+  return result;
+}
+
+function renderSlots(menu) {
+  document.getElementById('slotsWrap').innerHTML = menu.map((r,i) => {
+    const m = CAT[r.cat]||CAT.overig;
+    return `<div class="slot-row">
+      <div class="slot-day">
+        <div class="slot-day-name">${i<7?DAGEN[i]:'Dag'}</div>
+        <div class="slot-day-num">${i+1}</div>
+      </div>
+      <div class="slot-content">
+        <span class="dot" style="background:${m.color}"></span>
+        <span class="slot-meal" id="meal-${i}">${r.naam}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function spin() {
+  if (spinning) return;
+  const pool = getPool();
+  if (!pool.length) { showToast('Geen recepten voor deze selectie.'); return; }
+  spinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  const n = aantalDagen;
+  renderSlots(Array(n).fill({naam:'...',cat:'overig'}));
+  for(let i=0;i<n;i++){const el=document.getElementById(`meal-${i}`);if(el)el.classList.add('spinning');}
+  const mEls = Array.from({length:n},(_,i)=>document.getElementById(`meal-${i}`)).filter(Boolean);
+  const si = setInterval(()=>{ mEls.forEach(el=>{el.textContent=pool[Math.floor(Math.random()*pool.length)].naam;}); },80);
+  await new Promise(r=>setTimeout(r,1400));
+  clearInterval(si);
+  const menu = pickMenu(n);
+  currentMenu = menu;
+  mEls.forEach((el,i)=>{ el.classList.remove('spinning'); el.textContent=menu[i]?.naam||'?'; });
+  menu.forEach((r,i)=>{ const d=document.querySelector(`#slotsWrap .slot-row:nth-child(${i+1}) .dot`); if(d)d.style.background=(CAT[r.cat]||CAT.overig).color; });
+  document.getElementById('resultActions').style.display='block';
+  spinning=false;
+  document.getElementById('spinBtn').disabled=false;
+  showToast('Bon appétit!');
+}
+
+function copyMenu() {
+  const tekst = currentMenu.map((r,i)=>`${DAGEN[i]||'Dag '+(i+1)}: ${r.naam}`).join('\n');
+  navigator.clipboard.writeText(tekst).then(()=>showToast('Weekmenu gekopieerd!'));
+}
+
+// ════════════════════════════════
+// MODALS & UTILS
+// ════════════════════════════════
+function open(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function sluit(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target===m) sluit(m.id); });
+});
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+renderRecepten();
+renderRouChips();
+</script>
+</body>
+</html>
