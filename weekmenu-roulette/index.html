@@ -1143,8 +1143,10 @@ async function genereerRecept() {
     renderAiResultaat(aiRecept);
     document.getElementById('aiOpslaanBtn').style.display = 'inline-block';
   } catch(e) {
+    let errMsg = e.message;
+    try { const ed = await resp?.json(); errMsg = ed?.error || errMsg; } catch {}
     document.getElementById('aiResult').innerHTML =
-      `<div style="text-align:center;color:#e74c3c;padding:24px;font-size:0.83rem;">Er ging iets mis. Controleer je verbinding en probeer opnieuw.</div>`;
+      `<div style="text-align:center;color:#e74c3c;padding:24px;font-size:0.83rem;">Fout: ${errMsg}</div>`;
   }
   btn.disabled = false;
 }
